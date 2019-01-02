@@ -1,5 +1,9 @@
 # Math-Thesis
-Code for my undergraduate thesis in Mathematics. Final code to be uploaded soon!
 
-While I did finish my Thesis, I do not currently have access to my computer as it is on campus. The final code will be updated soon.
-However, the final code can be found temporarily at the end of the thesis pdf in the appendix with correct citations.
+## Applications of Linear Algebra in Facial Recognition
+
+This repository contains the code and final document for my undergraduate thesis in Mathematics at Bates College in Lewiston Maine.
+
+Note:
+
+While I did finish my Thesis, I do not currently have access to my computer. The final code will be updated soon, but can be found temporarily in the pdf in the appendix.
