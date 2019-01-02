@@ -1,9 +1,10 @@
 % 10/31/2018
-% Original exploration for thesis
+% Image Manipulation
 
 % I3 = 'eric.jpg'; %Import the image
 
 % whos I %See how image data is stored in the workplace
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Contrast Adjustment, Resizing an image
@@ -133,6 +134,10 @@ match = images(min_info(2)).name;
 furthest = images(leastLike(min_info(2))).name;
 % match_name = strtok(match,'.jpg')  % erase .jpg from filename
 
+
 % Print our match and percent confidence
 fprintf(['The input was matched with -> ', match, ' <- \nThe match has a confidence of ', num2str(confidence), '%%.\n'])
 fprintf(['The input is least similar to ', furthest, '\n'])  % COULD I ADD SOMETHING HERE FOR FURTHEST
+
+%latest
+

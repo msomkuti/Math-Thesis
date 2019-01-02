@@ -1,16 +1,15 @@
 function procIm = preProcessing(Image, gray, resize, contrast)
-% Preprocess input image
-    procIm = imread(Image);  % Read image data
+% Preprocessing done for almost all images
+
+    procIm = imread(Image);
     
-    % Convert to grayscale
-    if gray == 1  
+    if gray == 1  % convert to grayscale if necessary
          procIm = double(rgb2gray(procIm));
     end
     
-    % Equalize contrast
     if contrast == 1
             procIm = histeq(procIm);
     end
     
-    procIm = double(imresize(procIm, resize));  % Scale the image
+    procIm = double(imresize(procIm, resize));  % scale image
 end

@@ -1,4 +1,4 @@
-function [face_spaces, mean_faces, max_dists, least_likes] = space_creator(training_sets, K, dims)
+function [face_spaces, mean_faces, max_dists, least_likes] = space_creator(training_sets, K)
 % Function that built off of setup and some of Cao's code to make a new 
 % Original function that is dynamic.
 
@@ -7,13 +7,14 @@ mean_faces = cell(size(training_sets, 1), 1); % Hold mean faces
 num_images = zeros(size(training_sets, 1), 1);  % Hold num ims in each training set
 mean_images = cell(size(training_sets, 1), 1);  % Hold mean face images
 
-plot_count = 1;  % Index subplots
+dims = [73 58];  % All images will be resized to these dims for consistency
+plot_count = 1;
 
-num_ts = size(training_sets, 1);  % Num of training sets
+num_ts = size(training_sets, 1); % Num of training sets
 
 for i = 1:num_ts
     len = length(training_sets);
-    mean_face_image = zeros(dims);
+    mean_face_image = zeros(73,58);
 
     im_count = 0;  % Count num training images in each set
     for j = 1:len
@@ -41,29 +42,27 @@ for i = 1:num_ts
         mean_face_image = mean_face_image + tempIm;  % Add to mean face image
         
         columnf = tempIm(:);  % Turn image into column vector
-        S(:,j) = columnf;  % Append our column
-
+       
         % Plot face space
         hold on
         scatter(s_plot,1:length(columnf),columnf, '.'); 
         axis([0 length(columnf) 0 255])
         hold off
+        
+        S(:,j) = columnf;  % Append our column
     end
-    
     plot_count = plot_count + 1;  % Adv plot indx
     
     fBar = sum(S,2) / im_count; % Calculate the mean face
-    mean_faces{i} = fBar;       % Append mean face
+    mean_faces{i} = fBar;  % Append mean face to cell array
     s = size(S,2);
 
-    fBarMat = repmat(fBar,[1,s]); % Create matrix of mean face col vectors
+    fBarMat = repmat(fBar,[1,s]); % Create matrix full of mean face col vectors
 
-    A = S - fBarMat;     % Shift face space by mean face
-                         % Vectorized version of (19) in cao paper
-                         
+    A = S - fBarMat; % Vectorized version of (19) in cao paper
     face_spaces{i} = A;  % Append our face space to set of training images
     
-    % Scale m_f_i by num images in training set, append to set
+    % Scale mfi by num images in training set and append to set
     mean_images{i} = mean_face_image ./ im_count; 
     
     % Plot mean face for each training set
@@ -73,7 +72,7 @@ for i = 1:num_ts
     plot_count = plot_count + 1; % Adv plot indx
 end
 
-% Display images of each face spaces' mean face
+% Get average faces and display them
 for i = 1:num_ts
     mean_face_test = uint8(mean_images{i});
     figure
@@ -81,33 +80,24 @@ for i = 1:num_ts
     %TITLE THIS HERE
 end
 
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% For any image, the distance between it and the one least like it is the
-% furthest an unknown can be from it while still being a match
+max_dists = cell(size(training_sets, 1), 1);  % Max distances
+least_likes = cell(size(training_sets, 1), 1); % Least likes
 
-max_dists = cell(size(training_sets, 1), 1);    % Max distances
-least_likes = cell(size(training_sets, 1), 1);  % Least likes
-
-% For each image in training set, find image least like it and its distance
 for i = 1:num_ts
-    % Hold distances(input image to least similar in training set)
-    maxDistFromOther = zeros(1, num_images(i));  
-    
-    % For each image, store index of image least like it in set
-    % I.E. if image 5 is least like image 1, leastLike(1) = 5
-    leastLike = zeros(1, num_images(i)); 
+    maxDistFromOther = zeros(1, num_images(i));  % Used to find maximum threshhold, hold distances from 
+                    % input image to one least like it in the training set
+                    
+    leastLike = zeros(1, num_images(i)); % For each im in training set, which other im is least like it in the set
     
     for j = 1:num_images(i)
         disp(training_sets)
         fileName = char(training_sets(i,j));
-        tempIm = preProcessing(fileName, 1, dims, 0);
-        tempImComp = double(svdPartialSum(tempIm, K));
-        
-        % Use recognition to find least like and its distance 
-        [~, max_info] = simpleRecognition(face_spaces{i}, K, mean_faces{i}, tempImComp);  
+        tempIm = preProcessing(fileName, 1, [73 58], 0);
+        tempImComp = double(svdPartialSum(tempIm, K));  % Compress our images
+        [~, max_info] = simpleRecognition(face_spaces{i}, K, mean_faces{i}, tempImComp);  % Facial recognition
         max_dist = max_info(1) + mean_squared_error(tempIm, tempImComp, 0); 
         maxDistFromOther(j) = max_dist;
-        leastLike(j) = max_info(2);  % Store index
+        leastLike(j) = max_info(2);
     end
     max_dists{i} = maxDistFromOther;
     least_likes{i} = leastLike;
