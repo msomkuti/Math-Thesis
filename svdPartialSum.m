@@ -1,28 +1,31 @@
 function AK = svdPartialSum(A,K)
-A = double(A); % here we convert our grayscale values in double ints
-[u,s,v]=svd(A); % perform our svd and output it into the 3 matrices
-AK = u(:,1:K)*s(1:K,1:K)*v(:,1:K)'; % compression takes place
-                                     % here we are cutting off the smallest
-                                     % sv's, while also ensuring that our
-                                     % matrices are of the correct
-                                     % dimension
 
-                                     
-% HISTOGRAM OUR SING VALUES FOR THE IMAGE                                    
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% This section of code builds on Lije Cao's code on facial recognition from her
+% paper "Singular value decomposition applied to digital image processing."
+
+A = double(A);                       % Convert image data
+[u,s,v]=svd(A);                      % Perform SVD 
+
+AK = u(:,1:K)*s(1:K,1:K)*v(:,1:K)';  % Compression takes place
+                                     % Cutting off r - k singular values
+                                     % U and V' scaled as well                                     
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                    
+% Histogram the image's singular values                                  
 s1= s(1:K,1:K);
 s2 = s1(:);
 n = size(s2,1);
-singValues = [];
+singValues = [];  % Array of singular values
 for i = 1:n
     if s2(i) ~= 0
         singValues = [singValues; s2(i)];
     end
 end
 numBins = size(singValues,1);
-% hist(singValues,numBins)  % histogram sing values
-%END HISTOGRAM
-% figure
-AK = uint8(AK);  % convert our array back into the image format
-% imshow(AK)
-% figure; imshow(AK)  % display the converted image
+
+% figure; hist(singValues,numBins); % Display histogram
+
+AK = uint8(AK);     % Convert back to the image data
+% figure; imshow(AK)  % Display the converted image
 end

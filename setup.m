@@ -1,12 +1,10 @@
 function training_sets = setup()
-% I created this function
-
+% Original function
 %Find all images in subfolders with .jpg extension.
-image_files = dir ('**/*.jpg');
+image_files = dir ('**/*.jpg')
 num_files = length(image_files);
 
-% Find num of folders by locating where all images are in the Matlab
-% root directory.
+% Find num of folders by locating where images are in the MATLAB directory
 
 all_folders = strings(0,0);  % Pre-allocate string array
 folder_old = '';
@@ -23,7 +21,7 @@ end
 
 num_folders = length(all_folders);
 
-% Create string array that will hold paths of all images, each row is new
+% Preallocate string array holds paths of all images, each row is new
 % training set. Images must be sorted beforehand
 training_sets = strings(num_folders, num_files);  
                                                                               
@@ -39,10 +37,12 @@ for i = 1:num_files
         k = k+1; 
     else
         j = j+1;  % Move to next row / training set
-        k = 1;  % Reset our index to first column        
+        k = 1;    % Reset our index to first column      
+        
         image = strcat(image_files(i).folder,'\',image_files(i).name);
         training_sets(j,k) = image;  % Append path
+        folder_old = folder;         % Update training set folder
         k = k+1; 
-        folder_old = folder;  % Update training set folder
     end
+end
 end
